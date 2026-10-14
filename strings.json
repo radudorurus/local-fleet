@@ -1,0 +1,41 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add vehicle in the fleet",
+        "description": "Insert the vehicle details and the xlsx source file details.",
+        "data": {
+          "vin": "Chassis series (VIN)",
+          "plate": "Register plate",
+          "model": "Vehicle brand / model / year",
+          "file_path": "Path to the Excel file",
+          "sheet_name": "Sheet name",
+          "mileage_cell": "The cell containing the km number (ex: E2)"
+        }
+      }
+    },
+    "error": {
+      "already_configured": "This VIN is already present.",
+      "file_not_found": "The specified Excel file path does not exist on local storage."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure Fleet Vehicle Options",
+        "data": {
+          "file_path": "Path to the Excel file",
+          "sheet_name": "Sheet name",
+          "mileage_cell": "The cell containing the km number (ex: E2)",
+          "summer_dots": "Summer Tires DOT (format: WWYY, WWYY, WWYY, WWYY)",
+          "winter_dots": "Winter Tires DOT (format: WWYY, WWYY, WWYY, WWYY)",
+          "all_season_dots": "All-Season Tires DOT (format: WWYY, WWYY, WWYY, WWYY)"
+        }
+      }
+    },
+    "error": {
+      "file_not_found": "The specified Excel file path does not exist on local storage.",
+      "invalid_dot_format": "Invalid DOT format. Must be 4 groups of 4 digits separated by comma (e.g., 2221, 2221, 1422, 1422)."
+    }
+  }
+}

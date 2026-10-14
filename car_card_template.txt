@@ -1,0 +1,278 @@
+###########################
+# ----- car card template for local-fleet v1.3.0 -----
+# this card uses layout-card and lovelace-mushroom 
+# which must be installed from HACS
+# after adding your car, create a new card, choose manual, yaml editor
+# copy this code into the card edotor
+# find-replace the text [car_plate] with the value
+# of your car plate registered in the sensors
+# ab99cde for example, no caps
+# all the commented lines from this code dissappears when the card is saved
+##############################
+# This layout card organizes vehicle data into a two-column grid structure.
+# The picture block displays the vehicle identification image.
+# The car info card renders the vehicle model and VIN string.
+# The mileage card tracks current distance values in kilometers.
+# The service km card calculates distance to the next maintenance.
+# Dynamic color coding highlights maintenance urgency thresholds.
+# The service days card monitors remaining time until inspection.
+# The ITP card tracks mandatory technical inspection deadlines.
+# The RCA card tracks compulsory insurance validity periods.
+# The vignette card manages road tax expiration dates.
+# The tire type card displays the active seasonal tire configuration.
+# It warns if the installed tire type differs from the recommended set.
+# The tire age card computes the maximum age of the active tire set.
+# It appends a replacement notice if the age exceeds eight years.
+# Icons and colors dynamically change based on specific age thresholds.
+# For the recommendation to change the tire set based on season/temperature there is a helper sensor 'input_select.recommended_tire', a historic helper 'sensor.garage_ht_sensor_outside_low_temp_days' (temperature entity, state= <7, type of sensor= time, Start = empty, End= {{now()}}, duration= 3 days, class= Measurement) based on the temperature from 'sensor.ht_sensor_outside_temperature' and an automation which sets this sensor based on the outside history temperature and the weather prognosis for 5 days in advance.
+# You need to create the helper using your external temperature sensor.
+# and replace in the automation the historic helper name and the external temperature sensor name
+# If this is too complicated you may adjust the card code to ignore 'input_select.recommended_tire' sensor
+################################@
+# the automation code
+#################################
+# alias: recommended_tire
+# description: ''
+# triggers:
+#   - trigger: time
+#     at: '06:00:00'
+#     weekday:
+#       - sun
+#       - mon
+#       - tue
+#       - sat
+#       - fri
+#       - thu
+#       - wed
+# conditions: []
+# actions:
+#   - action: weather.get_forecasts
+#     metadata: {}
+#     target:
+#       entity_id: weather.forecast_home
+#     data:
+#       type: daily
+#     response_variable: prognoza_meteo
+#   - choose:
+#       - conditions:
+#           - condition: template
+#             value_template: >
+#               {% set forecast = prognoza_meteo['weather.forecast_home'].forecast
+#               %} {% set ns = namespace(cold_days=0) %} {% for day in
+#               forecast[:5] %}
+#                 {% if day.templow is defined and day.templow < 7 %}
+#                   {% set ns.cold_days = ns.cold_days + 1 %}
+#                 {% endif %}
+#               {% endfor %} {{ (ns.cold_days >= 3) or
+#               (states('sensor.garage_ht_sensor_outside_low_temp_days') |
+#               float(0) >= 24) or (states('sensor.ht_sensor_outside_temperature')
+#               | float(10) < 7) }}
+#         sequence:
+#           - target:
+#               entity_id: input_select.recommended_tire
+#             data:
+#               option: Winter
+#             action: input_select.select_option
+#       - conditions:
+#           - condition: template
+#             value_template: >
+#               {% set forecast = prognoza_meteo['weather.forecast_home'].forecast
+#               %} {% set ns = namespace(warm_days=0) %} {% for day in
+#               forecast[:5] %}
+#                 {% if day.templow is defined and day.templow >= 10 %}
+#                   {% set ns.warm_days = ns.warm_days + 1 %}
+#                 {% endif %}
+#               {% endfor %} {{ (ns.warm_days >= 4) and
+#               (states('sensor.ht_sensor_outside_temperature') | float(0) >= 10)
+#               }}
+#         sequence:
+#           - target:
+#               entity_id: input_select.recommended_tire
+#             data:
+#               option: Summer
+#             action: input_select.select_option
+# mode: single
+#########################################
+
+
+################################
+
+type: custom:layout-card
+layout_type: custom:grid-layout
+layout:
+  grid-template-columns: 1fr 1fr
+  grid-template-rows: auto
+  grid-template-areas: |
+    "plate plate"
+    "car_info car_info"
+    "mileage service_km"
+    "service_days itp"
+    "rca vignette"
+    "tire tire_age"
+cards:
+  - type: picture
+# you can generate/simulate your car plate image on 
+# https://fabricadenumere.ro/magazin/configuratoare/configurator-placa-52-x-11-cm-font-german/
+# then snip/trim save the imge as jpg named by your car plate value
+# used previously on the find/replace operation
+# the path /local is \\[your_ha_server]\config\www\
+    image: /local/[car_plate].jpg
+    tap_action:
+      action: none
+    view_layout:
+      grid-area: plate
+  - type: custom:mushroom-template-card
+    entity: text.[car_plate]_model
+    primary: 'VIN: {{ states(''sensor.[car_plate]_vin'') }}'
+    secondary: '{{ states(''text.[car_plate]_model'') }}'
+    icon: mdi:car-hatchback
+    icon_color: white
+    tap_action:
+      action: more-info
+    view_layout:
+      grid-area: car_info
+  - type: custom:mushroom-template-card
+    entity: sensor.[car_plate]_mileage
+    primary: Mileage
+    secondary: '{{ states(''sensor.[car_plate]_mileage'') }} km'
+    icon: mdi:speedometer
+    icon_color: blue
+    tap_action:
+      action: more-info
+    view_layout:
+      grid-area: mileage
+  - type: custom:mushroom-template-card
+    entity: number.[car_plate]_km_next_service
+    primary: Km to Service
+    secondary: '{{ states(''sensor.[car_plate]_km_until_next_service'') }} km'
+    icon: mdi:wrench
+    icon_color: >
+      {% set km = states('sensor.[car_plate]_km_until_next_service') | float(0) %}
+      {% if km < 0 %} red {% elif km <= 500 %} orange {% elif km <= 1000 %}
+      yellow {% else %} green {% endif %}
+    tap_action:
+      action: more-info
+    view_layout:
+      grid-area: service_km
+  - type: custom:mushroom-template-card
+    entity: date.[car_plate]_next_service
+    primary: Service
+    secondary: '{{ states(''sensor.[car_plate]_service_remaining_days'') }} days'
+    icon: mdi:calendar-check
+    icon_color: >
+      {% set days = states('sensor.[car_plate]_service_remaining_days') | float(0)
+      %} {% if days < 0 %} red {% elif days <= 7 %} orange {% elif days <= 30 %}
+      yellow {% else %} green {% endif %}
+    tap_action:
+      action: more-info
+    view_layout:
+      grid-area: service_days
+  - type: custom:mushroom-template-card
+    entity: date.[car_plate]_itp_valid_until
+    primary: ITP
+    secondary: '{{ states(''sensor.[car_plate]_itp_remaining_days'') }} days'
+    icon: mdi:file-document-outline
+    icon_color: >
+      {% set days = states('sensor.[car_plate]_itp_remaining_days') | float(0) %} {%
+      if days < 0 %} red {% elif days <= 7 %} orange {% elif days <= 30 %}
+      yellow {% else %} green {% endif %}
+    tap_action:
+      action: more-info
+    view_layout:
+      grid-area: itp
+  - type: custom:mushroom-template-card
+    entity: date.[car_plate]_rca_valid_until
+    primary: RCA
+    secondary: '{{ states(''sensor.[car_plate]_rca_remaining_days'') }} days'
+    icon: mdi:shield-car
+    icon_color: >
+      {% set days = states('sensor.[car_plate]_rca_remaining_days') | float(0) %} {%
+      if days < 0 %} red {% elif days <= 7 %} orange {% elif days <= 30 %}
+      yellow {% else %} green {% endif %}
+    tap_action:
+      action: more-info
+    view_layout:
+      grid-area: rca
+  - type: custom:mushroom-template-card
+    entity: date.[car_plate]_vignette_valid_until
+    primary: Vignette
+    secondary: '{{ states(''sensor.[car_plate]_vignette_remaining_days'') }} days'
+    icon: mdi:road-variant
+    icon_color: >
+      {% set days = states('sensor.[car_plate]_vignette_remaining_days') | float(0)
+      %} {% if days < 0 %} red {% elif days <= 7 %} orange {% elif days <= 30 %}
+      yellow {% else %} green {% endif %}
+    tap_action:
+      action: more-info
+    view_layout:
+      grid-area: vignette
+  - type: custom:mushroom-template-card
+    entity: select.[car_plate]_tire_type
+    primary: Tire Type
+    secondary: >
+      {% set current_tire = states('select.[car_plate]_tire_type') %} {% set
+      recommended = states('input_select.recommended_tire') %} {% if
+      current_tire != 'AllSeason' and current_tire != recommended %}
+        {{ current_tire }} >☀️⇔❄️
+      {% else %}
+        {{ current_tire }}
+      {% endif %}
+    icon: mdi:tire
+    icon_color: >
+      {% set current_tire = states('select.[car_plate]_tire_type') %} {% set
+      recommended = states('input_select.recommended_tire') %} {% if
+      current_tire != 'AllSeason' and current_tire != recommended %}
+        red
+      {% else %}
+        green
+      {% endif %}
+    tap_action:
+      action: more-info
+    view_layout:
+      grid-area: tire
+  - type: custom:mushroom-template-card
+    primary: Tire Age
+    secondary: |
+      {% set current_tire = states('select.[car_plate]_tire_type') %} {% set age = (
+        states('sensor.[car_plate]_summer_tire_age') if current_tire == 'Summer'
+        else states('sensor.[car_plate]_winter_tire_age') if current_tire == 'Winter'
+        else states('sensor.[car_plate]_all_season_tire_age') if current_tire == 'AllSeason'
+        else 0
+      ) | float(0) %} {% set age_str = (
+        states('sensor.[car_plate]_summer_tire_age') if current_tire == 'Summer'
+        else states('sensor.[car_plate]_winter_tire_age') if current_tire == 'Winter'
+        else states('sensor.[car_plate]_all_season_tire_age') if current_tire == 'AllSeason'
+        else 'N/A'
+      ) %} {% if age_str != 'N/A' %}
+        {{ age_str }} years{% if age > 8 %}  replace!{% endif %}
+      {% else %}
+        N/A
+      {% endif %}
+    icon: |
+      {% set current_tire = states('select.[car_plate]_tire_type') %} {% set age = (
+        states('sensor.[car_plate]_summer_tire_age') if current_tire == 'Summer'
+        else states('sensor.[car_plate]_winter_tire_age') if current_tire == 'Winter'
+        else states('sensor.[car_plate]_all_season_tire_age') if current_tire == 'AllSeason'
+        else 0
+      ) | float(0) %} {% if age > 10 %}
+        mdi:alert-outline
+      {% else %}
+        mdi:calendar-clock
+      {% endif %}
+    icon_color: |
+      {% set current_tire = states('select.[car_plate]_tire_type') %} {% set age = (
+        states('sensor.[car_plate]_summer_tire_age') if current_tire == 'Summer'
+        else states('sensor.[car_plate]_winter_tire_age') if current_tire == 'Winter'
+        else states('sensor.[car_plate]_all_season_tire_age') if current_tire == 'AllSeason'
+        else 0
+      ) | float(0) %} {% if age > 10 %}
+        red
+      {% elif age > 5 %}
+        orange
+      {% else %}
+        blue
+      {% endif %}
+    tap_action:
+      action: more-info
+    view_layout:
+      grid-area: tire_age
