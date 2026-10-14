@@ -32,6 +32,9 @@ For full visual component rendering, the following Lovelace frontend modules are
 3. Add `https://github.com/radudorurus/local-fleet` with category **Integration**.
 4. Click **Download** and restart Home Assistant.
 
+[explanations to add about how the integration works. what dependencies needs]
+[car_card_template.txt is also in the repo with comments]
+
 ## Configuration
 
 Configuration is handled via UI config flow. You will be prompted to enter vehicle identification data, initial mileage, service intervals, expiration dates, and DOT codes for tire sets.
