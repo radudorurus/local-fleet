@@ -48,8 +48,8 @@ Create new car/device flow:
 - path to the excel file (editable after creation)
 - sheet name from the excel file where the data for this vehicle is placed (editable after creation)
 - cell id (A2 for example) where the mileage is stored (editable after creation)
-After submitting info, the vehicle is created.
-The following sensors are created empty requiring your input:
+  After submitting info, the vehicle is created.
+  The following sensors are created empty requiring your input:
 - technical inspection validity date
 - next service km limit (usually 8000-30000km ahead from the last service mileage)
 - next service date (in future, usually 1yr from the last service)
@@ -58,7 +58,7 @@ The following sensors are created empty requiring your input:
 - summer_dots (editable - edit device after creation)
 - winter_dots (editable - edit device after creation)
 - all_season_dots (editable - edit device after creation)
-(DOT, tire manufacturing dates, have to comply the following syntax: four sets of numbers WWYY representing week number and last 2 digits of the year separated by comma and space eg, "4423, 4323, 4425, 4325", the oldest tire is considered when calculating the age)
+  (DOT, tire manufacturing dates, have to comply the following syntax: four sets of numbers WWYY representing week number and last 2 digits of the year separated by comma and space eg, "4423, 4323, 4425, 4325", the oldest tire is considered when calculating the age)
 Calculated sensors created:
 - summer_tire_age (uses summer_dots for calculation of the tire age)
 - winter_tire_age (uses summer_dots for calculation of the tire age)
