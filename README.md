@@ -44,9 +44,9 @@ Create new car/device flow:
 - VIN number field (cannot be modified/corrected later)
 - car number plate (cannot be modified/corrected later, it is the prefix for all the sensors of the device)
 - model (brand/model/engine/year description you want to see - editable later)
-- path to the excel file
-- sheet name from the excel file where the data for this vehicle is placed
-- cell id (A2 for example) where the mileage is stored
+- path to the excel file (editable after creation)
+- sheet name from the excel file where the data for this vehicle is placed (editable after creation)
+- cell id (A2 for example) where the mileage is stored (editable after creation)
 After submitting info, the vehicle is created.
 The following sensors are created empty requiring your input:
 - technical inspection validity date
@@ -68,7 +68,7 @@ Calculated sensors created:
 - vignette remaining days
 - next service remaining days  
 
-The repository includes a card with explanations and what dependencies needs.
+The repository includes a card code with explanations and what dependencies needs.
 [car_card_template.txt]
 
 ## Configuration
