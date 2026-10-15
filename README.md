@@ -32,7 +32,7 @@ For full visual component rendering, the following Lovelace frontend modules are
 3. Add `https://github.com/radudorurus/local-fleet` with category **Integration**.
 4. Click **Download** and restart Home Assistant.
 
-### How does it work? (detailed)
+## How does it work? (detailed)
 - The integration is built to read an excel file where the mileage of each car is stored.
 This excel file must be local, in the Home Assistant directories.
 (the default path/name is /config/downloads/jurnal_auto.xlsx which you may change upon your choice when adding new car or editing the car)
