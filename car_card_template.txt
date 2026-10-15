@@ -3,14 +3,14 @@
 # this card uses layout-card and lovelace-mushroom 
 # which must be installed from HACS
 # after adding your car, create a new card, choose manual, yaml editor
-# copy this code into the card edotor
+# copy this code into the card editor
 # find-replace the text [car_plate] with the value
 # of your car plate registered in the sensors
 # ab99cde for example, no caps
-# all the commented lines from this code dissappears when the card is saved
+# all the commented lines from this code disappears when the card is saved
 ##############################
 # This layout card organizes vehicle data into a two-column grid structure.
-# The picture block displays the vehicle identification image.
+# The picture block displays the vehicle identification image.(details on line 116)
 # The car info card renders the vehicle model and VIN string.
 # The mileage card tracks current distance values in kilometers.
 # The service km card calculates distance to the next maintenance.
@@ -28,6 +28,8 @@
 # You need to create the helper using your external temperature sensor.
 # and replace in the automation the historic helper name and the external temperature sensor name
 # If this is too complicated you may adjust the card code to ignore 'input_select.recommended_tire' sensor
+# inside the card there are value limits specified which leads to different colors of the icons, other icons or text displayed in case o warning limits reached
+# this card does not send notifications on the phone, if you want notifications, use the proper process on HA instance to create automatons for notifications.
 ################################@
 # the automation code
 #################################
@@ -126,7 +128,9 @@ cards:
     primary: 'VIN: {{ states(''sensor.[car_plate]_vin'') }}'
     secondary: '{{ states(''text.[car_plate]_model'') }}'
     icon: mdi:car-hatchback
+    # you may want a different car icon
     icon_color: white
+    # you may choose your car color
     tap_action:
       action: more-info
     view_layout:
