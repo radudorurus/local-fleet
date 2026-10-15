@@ -48,8 +48,9 @@ Create new car/device flow:
 - path to the excel file (editable after creation)
 - sheet name from the excel file where the data for this vehicle is placed (editable after creation)
 - cell id (A2 for example) where the mileage is stored (editable after creation)
-  After submitting info, the vehicle is created.
-  The following sensors are created empty requiring your input:
+--------
+After submitting info, the vehicle is created.
+The following sensors are created empty requiring your input:
 - technical inspection validity date
 - next service km limit (usually 8000-30000km ahead from the last service mileage)
 - next service date (in future, usually 1yr from the last service)
