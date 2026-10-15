@@ -59,7 +59,9 @@ The following sensors are created empty requiring your input:
 - summer_dots (editable - edit device after creation)
 - winter_dots (editable - edit device after creation)
 - all_season_dots (editable - edit device after creation)
-  (DOT, tire manufacturing dates, have to comply the following syntax: four sets of numbers WWYY representing week number and last 2 digits of the year separated by comma and space eg, "4423, 4323, 4425, 4325", the oldest tire is considered when calculating the age)
+------------
+ (DOT, tire manufacturing dates, have to comply the following syntax: four sets of numbers WWYY representing week number and last 2 digits of the year separated by comma and space eg, "4423, 4323, 4425, 4325", the oldest tire is considered when calculating the age)
+-------------
 Calculated sensors created:
 - summer_tire_age (uses summer_dots for calculation of the tire age)
 - winter_tire_age (uses summer_dots for calculation of the tire age)
