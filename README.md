@@ -39,6 +39,7 @@ This excel file must be local, in the Home Assistant directories.
 If you have it stored somewhere else in the network, you need to create an automation to be updated/copied regularly.
 **As a verified good practice use file/sheet names without spaces**.
 (mine stays on gdrive where is easily available to update from the phone, I share it everyone with the link, created a command automation executing each 6h which copies it from gdrive locally)
+
 Create new car/device flow:
 - VIN number field (cannot be modified/corrected later)
 - car number plate (cannot be modified/corrected later, it is the prefix for all the sensors of the device)
