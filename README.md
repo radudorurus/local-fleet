@@ -1,6 +1,6 @@
 # Local Fleet Manager (`local_fleet`)
 
-Custom Home Assistant integration designed for monitoring fleet vehicle operational parameters, maintenance schedules, legal document expirations, and tire structural age based on DOT codes.
+Custom Home Assistant integration designed for monitoring fleet vehicle operational parameters, maintenance schedules, legal document expiration, and tire structural age based on DOT codes.
 
 ## Features
 
@@ -32,8 +32,43 @@ For full visual component rendering, the following Lovelace frontend modules are
 3. Add `https://github.com/radudorurus/local-fleet` with category **Integration**.
 4. Click **Download** and restart Home Assistant.
 
-[explanations to add about how the integration works. what dependencies needs]
-[car_card_template.txt is also in the repo with comments]
+How does it work?
+- The integration is built to read an excel file where the mileage of each car is stored.
+This excel file must be local, in the Home Assistant directories.
+(the default path/name is /config/downloads/jurnal_auto.xlsx which you may change upon your choice when adding new car or editing the car)
+If you have it stored somewhere else in the network, you need to create an automation to be updated/copied regularly.
+**As a verified good practice use file/sheet names without spaces**.
+(mine stays on gdrive where is easily available to update from the phone, I share it everyone with the link, created a command automation executing each 6h which copies it from gdrive locally)
+Create new car/device flow:
+- VIN number field (cannot be modified/corrected later)
+- car number plate (cannot be modified/corrected later, it is the prefix for all the sensors of the device)
+- model (brand/model/engine/year description you want to see - editable later)
+- path to the excel file
+- sheet name from the excel file where the data for this vehicle is placed
+- cell id (A2 for example) where the mileage is stored
+After submitting info, the vehicle is created.
+The following sensors are created empty requiring your input:
+- technical inspection validity date
+- next service km limit (usually 8000-30000km ahead from the last service mileage)
+- next service date (in future, usually 1yr from the last service)
+- insurance validity date
+- vignette validity date
+- summer_dots (editable - edit device after creation)
+- winter_dots (editable - edit device after creation)
+- all_season_dots (editable - edit device after creation)
+(DOT, tire manufacturing dates, have to comply the following syntax: four sets of numbers WWYY representing week number and last 2 digits of the year separated by comma and space eg, "4423, 4323, 4425, 4325", the oldest tire is considered when calculating the age)
+Calculated sensors created:
+- summer_tire_age (uses summer_dots for calculation of the tire age)
+- winter_tire_age (uses summer_dots for calculation of the tire age)
+- all_season_tire_age (uses summer_dots for calculation of the tire age)
+- ITP remaining days
+- Km until next service
+- RCA remaining days
+- vignette remaining days
+- next service remaining days  
+
+The repository includes a card with explanations and what dependencies needs.
+[car_card_template.txt]
 
 ## Configuration
 
