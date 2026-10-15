@@ -64,8 +64,8 @@ The following sensors are created empty requiring your input:
  
 Calculated sensors created:
 - summer_tire_age (uses summer_dots for calculation of the tire age)
-- winter_tire_age (uses summer_dots for calculation of the tire age)
-- all_season_tire_age (uses summer_dots for calculation of the tire age)
+- winter_tire_age (uses winter_dots for calculation of the tire age)
+- all_season_tire_age (uses all_season_dots for calculation of the tire age)
 - ITP remaining days
 - Km until next service
 - RCA remaining days
